@@ -8,6 +8,8 @@ public class DustClickHandler : MonoBehaviour, IPointerClickHandler
     private Renderer rend;
     private Color originalColor;
 
+    public int scoreValue = 1; 
+
     private void Awake()
     {
         rend = GetComponent<Renderer>();
@@ -18,7 +20,6 @@ public class DustClickHandler : MonoBehaviour, IPointerClickHandler
     {
         clickCount++;
 
-        // 알파값 감소
         float alpha = Mathf.Clamp01(1f - (clickCount / 3f));
         Color newColor = originalColor;
         newColor.a = alpha;
@@ -26,6 +27,8 @@ public class DustClickHandler : MonoBehaviour, IPointerClickHandler
 
         if (clickCount >= 3)
         {
+            ScoreManager.Instance.AddScore(scoreValue);
+
             Destroy(gameObject);
         }
     }
