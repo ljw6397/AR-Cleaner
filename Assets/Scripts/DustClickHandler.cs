@@ -8,7 +8,7 @@ public class DustClickHandler : MonoBehaviour, IPointerClickHandler
     private Renderer rend;
     private Color originalColor;
 
-    public int scoreValue = 1; 
+    public int scoreValue = 1; // 생성 시 DustSpawner에서 변경 가능
 
     private void Awake()
     {
@@ -28,7 +28,6 @@ public class DustClickHandler : MonoBehaviour, IPointerClickHandler
         if (clickCount >= 3)
         {
             ScoreManager.Instance.AddScore(scoreValue);
-
             Destroy(gameObject);
         }
     }

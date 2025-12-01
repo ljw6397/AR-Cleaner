@@ -1,3 +1,4 @@
+using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.XR.ARFoundation;
@@ -7,9 +8,6 @@ public class DustSpawner : MonoBehaviour
 {
     [Header("AR Components")]
     public ARPlaneManager planeManager;
-
-    [Header("Dust Prefabs (랜덤 선택)")]
-    public List<GameObject> dustPrefabs = new List<GameObject>();
 
     [Header("Spawn Settings")]
     [Range(0f, 1f)]
@@ -26,7 +24,80 @@ public class DustSpawner : MonoBehaviour
     public float spawnRadius = 0.5f;
 
 
+    [Header("Dust Prefabs & Scores")]
+    public List<GameObject> dustPrefabs = new List<GameObject>();
+    public List<int> dustScores = new List<int>(); // prefab과 같은 순서로 점수
 
+    [Header("Dust Lifetime & Respawn")]
+    public float dustLifetime = 5f; // 먼지 지속 시간
+    public float respawnDelay = 2f; // 삭제 후 재생성 대기 시간
+
+    void OnPlanesChanged(ARPlanesChangedEventArgs args)
+    {
+        foreach (var plane in args.added)
+        {
+            StartCoroutine(SpawnDustLoop(plane));
+        }
+    }
+
+    private IEnumerator SpawnDustLoop(ARPlane plane)
+    {
+        while (plane != null && plane.gameObject.activeInHierarchy)
+        {
+            if (dustPrefabs.Count == 0 || dustScores.Count != dustPrefabs.Count)
+                yield break;
+
+            if (Random.value < spawnChance)
+            {
+                int dustCount = Random.Range(minDustCount, maxDustCount + 1);
+                List<GameObject> spawnedDusts = new List<GameObject>();
+
+                for (int i = 0; i < dustCount; i++)
+                {
+                    int randomIndex = Random.Range(0, dustPrefabs.Count);
+                    GameObject randomDust = dustPrefabs[randomIndex];
+                    int dustScore = dustScores[randomIndex];
+
+                    Vector2 randomPos2D = Random.insideUnitCircle * spawnRadius;
+                    Vector3 spawnPos = plane.center + plane.transform.TransformDirection(new Vector3(randomPos2D.x, 0f, randomPos2D.y));
+                    spawnPos += plane.transform.up * 0.02f;
+                    Quaternion spawnRot = Quaternion.identity;
+
+                    GameObject dust = Instantiate(randomDust, spawnPos, spawnRot, plane.transform);
+
+                    dust.transform.LookAt(Camera.main.transform, plane.transform.up);
+                    dust.transform.Rotate(90f, -90f, 0f);
+                    dust.transform.Rotate(Vector3.forward * Random.Range(0f, 360f));
+                    float randomScale = Random.Range(5f, 6f);
+                    dust.transform.localScale = Vector3.one * randomScale;
+
+                    DustClickHandler handler = dust.GetComponent<DustClickHandler>();
+                    if (handler == null) handler = dust.AddComponent<DustClickHandler>();
+                    handler.scoreValue = dustScore;
+
+                    if (dust.GetComponent<Collider>() == null)
+                        dust.AddComponent<SphereCollider>();
+
+                    spawnedDusts.Add(dust);
+                }
+
+                // 일정 시간 후 삭제
+                yield return new WaitForSeconds(dustLifetime);
+
+                foreach (var dust in spawnedDusts)
+                {
+                    if (dust != null) Destroy(dust);
+                }
+
+                // 재생성 대기
+                yield return new WaitForSeconds(respawnDelay);
+            }
+            else
+            {
+                yield return new WaitForSeconds(1f); // 랜덤 스폰 실패 시 대기
+            }
+        }
+    }
     void Start()
     {
         if (planeManager == null)
@@ -44,49 +115,5 @@ public class DustSpawner : MonoBehaviour
     {
         if (planeManager != null)
             planeManager.planesChanged -= OnPlanesChanged;
-    }
-
-    void OnPlanesChanged(ARPlanesChangedEventArgs args)
-    {
-        foreach (var plane in args.added)
-        {
-            if (dustPrefabs.Count == 0) return;
-
-            if (Random.value < spawnChance)
-            {
-                int dustCount = Random.Range(minDustCount, maxDustCount + 1);
-
-                for (int i = 0; i < dustCount; i++)
-                {
-                    GameObject randomDust = dustPrefabs[Random.Range(0, dustPrefabs.Count)];
-
-                    Vector2 randomPos2D = Random.insideUnitCircle * spawnRadius;
-                    Vector3 spawnPos = plane.center + plane.transform.TransformDirection(new Vector3(randomPos2D.x, 0f, randomPos2D.y));
-
-                    spawnPos += plane.transform.up * 0.01f;
-
-                    Quaternion spawnRot = plane.transform.rotation;
-                    GameObject dust = Instantiate(randomDust, spawnPos, spawnRot, plane.transform);
-
-                    dust.transform.LookAt(Camera.main.transform, plane.transform.up);
-
-                    dust.transform.position += dust.transform.forward * 0.005f;
-
-                    dust.transform.Rotate(Vector3.forward * Random.Range(0f, 360f));
-                    float randomScale = Random.Range(0.05f, 0.15f);
-                    dust.transform.localScale = Vector3.one * randomScale;
-
-                    if (dust.GetComponent<DustClickHandler>() == null)
-                    {
-                        dust.AddComponent<DustClickHandler>();
-                    }
-
-                    if (dust.GetComponent<Collider>() == null)
-                    {
-                        dust.AddComponent<SphereCollider>();
-                    }
-                }
-            }
-        }
     }
 }
