@@ -8,27 +8,53 @@ public class DustClickHandler : MonoBehaviour, IPointerClickHandler
     private Renderer rend;
     private Color originalColor;
 
-    public int scoreValue = 1; // 생성 시 DustSpawner에서 변경 가능
+    public int scoreValue = 1;
 
     private void Awake()
     {
         rend = GetComponent<Renderer>();
-        originalColor = rend.material.color;
+        originalColor = rend.material.GetColor("_BaseColor");  // ← URP Lit 컬러 읽기
     }
 
     public void OnPointerClick(PointerEventData eventData)
     {
         clickCount++;
 
+        if (clickCount == 1)
+            SetURPTransparent(rend.material);
+
         float alpha = Mathf.Clamp01(1f - (clickCount / 3f));
+
         Color newColor = originalColor;
         newColor.a = alpha;
-        rend.material.color = newColor;
+
+        rend.material.SetColor("_BaseColor", newColor); // ← URP Lit 컬러 적용
 
         if (clickCount >= 3)
         {
             ScoreManager.Instance.AddScore(scoreValue);
             Destroy(gameObject);
         }
+    }
+
+    void SetURPTransparent(Material mat)
+    {
+        // Surface Type = Transparent
+        mat.SetFloat("_Surface", 1.0f);
+
+        // Blending 설정
+        mat.SetFloat("_Blend", 0);   // Alpha blending
+        mat.SetFloat("_SrcBlend", (float)UnityEngine.Rendering.BlendMode.SrcAlpha);
+        mat.SetFloat("_DstBlend", (float)UnityEngine.Rendering.BlendMode.OneMinusSrcAlpha);
+
+        // ZWrite 끄기
+        mat.SetFloat("_ZWrite", 0);
+
+        // 키워드 설정
+        mat.DisableKeyword("_SURFACE_TYPE_OPAQUE");
+        mat.EnableKeyword("_SURFACE_TYPE_TRANSPARENT");
+        mat.EnableKeyword("_ALPHAPREMULTIPLY_ON");
+
+        mat.renderQueue = 3000;
     }
 }
