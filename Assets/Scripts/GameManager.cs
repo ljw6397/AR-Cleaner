@@ -39,7 +39,9 @@ public class GameManager : MonoBehaviour
         if (stageClearText != null) stageClearText.gameObject.SetActive(false);
         if (stageFailText != null) stageFailText.gameObject.SetActive(false);
 
+        StartStage(currentStageIndex);   
     }
+
     void Update()
     {
         if (!stageActive) return;

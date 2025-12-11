@@ -316,8 +316,26 @@ MonoBehaviour:
   - {fileID: 3066914543103364716, guid: 77795e3fa22a92e4c812ad68f2938302, type: 3}
   - {fileID: 7697715788456339883, guid: 297f937338082d946acf4170b4f81942, type: 3}
   - {fileID: 9095843115904800138, guid: 69fe117e6c3a0674fb251ccae648ca51, type: 3}
+  - {fileID: 6208641791366751448, guid: a1eac481e7dc2df4d90ae9183a9ceb2c, type: 3}
+  - {fileID: 1324490150191945985, guid: 895c0b2aabc0ca6459513e04e678e0d0, type: 3}
+  - {fileID: 5996287485314103604, guid: 6f5608f78998540409bc679a06a7c024, type: 3}
+  - {fileID: 4177921784954548276, guid: 6be20ebd55165384189a20ba8726247b, type: 3}
+  - {fileID: 9183524720317855275, guid: 63a32a847e67e37448411469762ce628, type: 3}
+  - {fileID: 5937035528482043274, guid: 81af2c15910067041909a33d984513e2, type: 3}
+  - {fileID: 7276285081369741446, guid: 4672cb8e63ab1c2409c43561f3c6db40, type: 3}
+  - {fileID: 7514747873688812143, guid: 3259460b2fef45a4db9930d30b5f6307, type: 3}
+  - {fileID: 3710865360293266139, guid: 7c523364db26d2044aa58d0bb327b9e8, type: 3}
+  - {fileID: 5543227808564731718, guid: 9c913e12aced486449cad224504db532, type: 3}
+  - {fileID: 2473079862536907253, guid: 5eaa347e01c0cf346872f57e79b1e73c, type: 3}
+  - {fileID: 3482170981477913434, guid: 93bb77bcbc714344293be0fb88faea80, type: 3}
+  - {fileID: 3385765015876124316, guid: 64e8caddd3216c44f8cf4301e233bb93, type: 3}
+  - {fileID: 3887696882045869258, guid: cc0d621af8eb8da4bb5a425ada73073c, type: 3}
+  - {fileID: 2413167345079908589, guid: fea81637d38ca1a4db65658004f9db46, type: 3}
+  - {fileID: 2413167345079908589, guid: fea81637d38ca1a4db65658004f9db46, type: 3}
+  - {fileID: 7770902464466219395, guid: 52c6f6f09ef58ae448361e6dacb5b202, type: 3}
+  - {fileID: 2996705469464831337, guid: e9b811b7f0bbb4848ae2b474d1158bbd, type: 3}
   - {fileID: 6756957455579077261, guid: 44718ab811d538a48b141e191abf581b, type: 3}
-  dustScores: 010000000100000002000000010000000300000002000000
+  dustScores: 010000000100000003000000010000000300000001000000020000000100000004000000020000000200000001000000010000000200000002000000010000000200000001000000010000000200000001000000020000000100000004000000
   dustLifetime: 15
   respawnDelay: 5
 --- !u!1001 &385279248
@@ -1025,25 +1043,25 @@ MonoBehaviour:
   stages:
   - stageNumber: 1
     targetScore: 40
-    timeLimit: 100
+    timeLimit: 110
   - stageNumber: 2
     targetScore: 60
-    timeLimit: 100
+    timeLimit: 110
   - stageNumber: 3
     targetScore: 80
-    timeLimit: 100
+    timeLimit: 125
   - stageNumber: 4
     targetScore: 100
-    timeLimit: 110
+    timeLimit: 150
   - stageNumber: 5
     targetScore: 120
-    timeLimit: 130
-  currentStageIndex: 0
+    timeLimit: 180
+  currentStageIndex: 1
   stageText: {fileID: 573292095}
   timerText: {fileID: 1751884884}
   targetScoreText: {fileID: 1847465603}
   stageClearText: {fileID: 1749703145}
-  stageFailText: {fileID: 0}
+  stageFailText: {fileID: 1717544153}
   clearGroup: {fileID: 2037965706}
   failGroup: {fileID: 653436703}
 --- !u!4 &1705960077

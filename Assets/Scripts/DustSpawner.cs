@@ -63,7 +63,7 @@ public class DustSpawner : MonoBehaviour
                     spawnPos += plane.transform.up * 0.02f;
                     Quaternion spawnRot = Quaternion.identity;
 
-                    GameObject dust = Instantiate(randomDust, spawnPos, spawnRot, plane.transform);
+                 GameObject dust = Instantiate(randomDust, spawnPos, spawnRot);
 
                     dust.transform.Rotate(Vector3.forward * Random.Range(0f, 360f));
                     float randomScale = Random.Range(5f, 6f);
