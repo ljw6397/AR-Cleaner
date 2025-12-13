@@ -1,4 +1,4 @@
-using System.Collections;
+﻿using System.Collections;
 using System.Collections.Generic;
 using Unity.XR.CoreUtils;
 using UnityEngine;
@@ -47,6 +47,15 @@ public class StageSelectManager : MonoBehaviour
 
     public void SelectStage(int stageIndex)
     {
+        StartCoroutine(SelectStageRoutine(stageIndex));
+    }
+
+    IEnumerator SelectStageRoutine(int stageIndex)
+    {
+        SoundManager.Instance.PlayStageSelect();
+
+        yield return new WaitForSeconds(0.3f);
+
         PlayerPrefs.SetInt("SelectedStageIndex", stageIndex);
         SceneManager.LoadScene("SampleScene");
     }

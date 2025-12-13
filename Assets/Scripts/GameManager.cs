@@ -16,8 +16,8 @@ public class GameManager : MonoBehaviour
     public Text targetScoreText;
 
     [Header("Result UI")]
-    public Text stageClearText;
-    public Text stageFailText;
+    public GameObject stageClearUI;
+    public GameObject stageFailUI;
     public CanvasGroup clearGroup;
     public CanvasGroup failGroup;
 
@@ -36,10 +36,10 @@ public class GameManager : MonoBehaviour
     {
         currentStageIndex = PlayerPrefs.GetInt("SelectedStageIndex", 0);
 
-        if (stageClearText != null) stageClearText.gameObject.SetActive(false);
-        if (stageFailText != null) stageFailText.gameObject.SetActive(false);
+        if (stageClearUI != null) stageClearUI.SetActive(false);
+        if (stageFailUI != null) stageFailUI.SetActive(false);
 
-        StartStage(currentStageIndex);   
+        StartStage(currentStageIndex);
     }
 
     void Update()
@@ -92,25 +92,25 @@ public class GameManager : MonoBehaviour
         {
             StopCoroutine(timerFlashRoutine);
             timerFlashRoutine = null;
-            timerText.color = Color.white; 
+            timerText.color = Color.white;
         }
 
         if (success)
         {
             PlayerPrefs.SetInt($"Stage{currentStageIndex + 1}_Clear", 1);
 
-            stageClearText.gameObject.SetActive(true);
+            stageClearUI.SetActive(true);
+            clearGroup.alpha = 0f;
             StartCoroutine(FadeIn(clearGroup, 1f));
-
-            StartCoroutine(LoadStageSelectAfterDelay());
         }
         else
         {
-            stageFailText.gameObject.SetActive(true);
+            stageFailUI.SetActive(true);
+            failGroup.alpha = 0f;
             StartCoroutine(FadeIn(failGroup, 1f));
-
-            StartCoroutine(LoadStageSelectAfterDelay());
         }
+
+        StartCoroutine(LoadStageSelectAfterDelay());
     }
 
     private IEnumerator LoadStageSelectAfterDelay()
@@ -122,16 +122,28 @@ public class GameManager : MonoBehaviour
     private IEnumerator FadeIn(CanvasGroup group, float duration)
     {
         float t = 0f;
+
         group.alpha = 0f;
+        Transform tr = group.transform;
+
+        Vector3 startScale = Vector3.one * 0.8f;
+        Vector3 endScale = Vector3.one;
+
+        tr.localScale = startScale;
 
         while (t < duration)
         {
             t += Time.deltaTime;
-            group.alpha = Mathf.Lerp(0f, 1f, t / duration);
+            float ratio = t / duration;
+
+            group.alpha = Mathf.Lerp(0f, 1f, ratio);
+            tr.localScale = Vector3.Lerp(startScale, endScale, ratio);
+
             yield return null;
         }
 
         group.alpha = 1f;
+        tr.localScale = endScale;
     }
 
     private IEnumerator FlashTimer()

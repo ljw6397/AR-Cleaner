@@ -21,17 +21,27 @@ public class DustClickHandler : MonoBehaviour, IPointerClickHandler
         clickCount++;
 
         if (clickCount == 1)
+        {
             SetURPTransparent(rend.material);
+            DustEffectManager.Instance.PlayBigDust(transform.position);
+            SoundManager.Instance.PlaySqueak();
+        }
+        else if (clickCount == 2)
+        {
+            DustEffectManager.Instance.PlaySmallDust(transform.position);
+            SoundManager.Instance.PlaySqueak();
+        }
 
         float alpha = Mathf.Clamp01(1f - (clickCount / 3f));
-
         Color newColor = originalColor;
         newColor.a = alpha;
-
-        rend.material.SetColor("_BaseColor", newColor); // ← URP Lit 컬러 적용
+        rend.material.SetColor("_BaseColor", newColor);
 
         if (clickCount >= 3)
         {
+            DustEffectManager.Instance.PlayCleanFinish(transform.position);
+            SoundManager.Instance.PlayCleanFinish();
+
             ScoreManager.Instance.AddScore(scoreValue);
             Destroy(gameObject);
         }
