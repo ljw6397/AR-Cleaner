@@ -1,4 +1,4 @@
-using System.Collections;
+ï»¿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
@@ -14,6 +14,8 @@ public class GameManager : MonoBehaviour
     public Text stageText;
     public Text timerText;
     public Text targetScoreText;
+    [Header("Countdown UI")]
+    public Text countdownText;
 
     [Header("Result UI")]
     public GameObject stageClearUI;
@@ -69,19 +71,54 @@ public class GameManager : MonoBehaviour
     {
         if (index >= stages.Count)
         {
-            Debug.Log("¸ðµç ½ºÅ×ÀÌÁö Å¬¸®¾î!");
+            Debug.Log("ëª¨ë“  ìŠ¤í…Œì´ì§€ í´ë¦¬ì–´!");
             return;
         }
 
         Stage stage = stages[index];
         stageText.text = "Stage " + stage.stageNumber;
-        targetScoreText.text = "¸ñÇ¥ Á¡¼ö: " + stage.targetScore;
+        targetScoreText.text = "ëª©í‘œ ì ìˆ˜: " + stage.targetScore;
+
         currentTime = stage.timeLimit;
 
         ScoreManager.Instance.score = 0;
         ScoreManager.Instance.UpdateUI();
 
-        stageActive = true;
+        stageActive = false; 
+
+        StartCoroutine(StageCountdown());
+    }
+
+    private IEnumerator StageCountdown()
+    {
+        countdownText.gameObject.SetActive(true);
+
+        for (int i = 3; i > 0; i--)
+        {
+            countdownText.text = i.ToString();
+            countdownText.transform.localScale = Vector3.one * 1.2f;
+
+            float t = 0f;
+            while (t < 0.2f)
+            {
+                t += Time.deltaTime;
+                countdownText.transform.localScale = Vector3.Lerp(
+                    Vector3.one * 1.2f,
+                    Vector3.one,
+                    t / 0.2f
+                );
+                yield return null;
+            }
+
+            yield return new WaitForSeconds(1f);
+        }
+
+        countdownText.text = "GO!";
+        yield return new WaitForSeconds(0.5f);
+
+        countdownText.gameObject.SetActive(false);
+
+        stageActive = true; 
     }
 
     void EndStage(bool success)
@@ -155,11 +192,11 @@ public class GameManager : MonoBehaviour
 
         while (true)
         {
-            // »¡°£»öÀ¸·Î º¯°æ
+            // ë¹¨ê°„ìƒ‰ìœ¼ë¡œ ë³€ê²½
             timerText.color = flashColor;
             yield return new WaitForSeconds(speed);
 
-            // ¿ø·¡ »öÀ¸·Î º¯°æ
+            // ì›ëž˜ ìƒ‰ìœ¼ë¡œ ë³€ê²½
             timerText.color = normalColor;
             yield return new WaitForSeconds(speed);
         }
