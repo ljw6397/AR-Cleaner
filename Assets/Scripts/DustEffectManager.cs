@@ -1,4 +1,4 @@
-using System.Collections;
+﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
@@ -11,6 +11,9 @@ public class DustEffectManager : MonoBehaviour
     public GameObject smallDustEffect;
     public GameObject cleanFinishEffect;
 
+    [Header("Skill Effect")]
+    public GameObject goldenCleanEffect;
+
     private void Awake()
     {
         if (Instance == null)
@@ -21,17 +24,22 @@ public class DustEffectManager : MonoBehaviour
 
     public void PlayBigDust(Vector3 pos)
     {
-        Spawn(bigDustEffect, pos, 0.05f);   
+        Spawn(bigDustEffect, pos, 0.05f);
     }
 
     public void PlaySmallDust(Vector3 pos)
     {
-        Spawn(smallDustEffect, pos, 0.03f); 
+        Spawn(smallDustEffect, pos, 0.03f);
     }
 
     public void PlayCleanFinish(Vector3 pos)
     {
         Spawn(cleanFinishEffect, pos, 0.05f);
+    }
+
+    public void PlayGoldenClean(Vector3 pos)
+    {
+        Spawn(goldenCleanEffect, pos, 0.07f); 
     }
 
     void Spawn(GameObject prefab, Vector3 pos, float scale)
@@ -40,7 +48,6 @@ public class DustEffectManager : MonoBehaviour
 
         GameObject fx = Instantiate(prefab, pos, Quaternion.identity);
         fx.transform.localScale = Vector3.one * scale;
-
         Destroy(fx, 2f);
     }
 }

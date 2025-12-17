@@ -1,4 +1,4 @@
-using UnityEngine;
+Ôªøusing UnityEngine;
 using UnityEngine.EventSystems;
 
 [RequireComponent(typeof(Renderer))]
@@ -13,11 +13,18 @@ public class DustClickHandler : MonoBehaviour, IPointerClickHandler
     private void Awake()
     {
         rend = GetComponent<Renderer>();
-        originalColor = rend.material.GetColor("_BaseColor");  // °Á URP Lit ƒ√∑Ø ¿–±‚
+        originalColor = rend.material.GetColor("_BaseColor");  // ‚Üê URP Lit Ïª¨Îü¨ ÏùΩÍ∏∞
     }
 
     public void OnPointerClick(PointerEventData eventData)
     {
+        if (DustSkillManager.Instance != null &&
+            DustSkillManager.Instance.IsSkillActive)
+        {
+            SkillClean();
+            return;
+        }
+
         clickCount++;
 
         if (clickCount == 1)
@@ -39,12 +46,23 @@ public class DustClickHandler : MonoBehaviour, IPointerClickHandler
 
         if (clickCount >= 3)
         {
-            DustEffectManager.Instance.PlayCleanFinish(transform.position);
-            SoundManager.Instance.PlayCleanFinish();
-
-            ScoreManager.Instance.AddScore(scoreValue);
-            Destroy(gameObject);
+            NormalClean();
         }
+    }
+    void SkillClean()
+    {
+        DustEffectManager.Instance.PlayGoldenClean(transform.position);
+        SoundManager.Instance.PlayCleanFinish();
+        ScoreManager.Instance.AddScore(scoreValue);
+        Destroy(gameObject);
+    }
+
+    void NormalClean()
+    {
+        DustEffectManager.Instance.PlayCleanFinish(transform.position);
+        SoundManager.Instance.PlayCleanFinish();
+        ScoreManager.Instance.AddScore(scoreValue);
+        Destroy(gameObject);
     }
 
     void SetURPTransparent(Material mat)
@@ -52,15 +70,15 @@ public class DustClickHandler : MonoBehaviour, IPointerClickHandler
         // Surface Type = Transparent
         mat.SetFloat("_Surface", 1.0f);
 
-        // Blending º≥¡§
+        // Blending ÏÑ§Ï†ï
         mat.SetFloat("_Blend", 0);   // Alpha blending
         mat.SetFloat("_SrcBlend", (float)UnityEngine.Rendering.BlendMode.SrcAlpha);
         mat.SetFloat("_DstBlend", (float)UnityEngine.Rendering.BlendMode.OneMinusSrcAlpha);
 
-        // ZWrite ≤Ù±‚
+        // ZWrite ÎÅÑÍ∏∞
         mat.SetFloat("_ZWrite", 0);
 
-        // ≈∞øˆµÂ º≥¡§
+        // ÌÇ§ÏõåÎìú ÏÑ§Ï†ï
         mat.DisableKeyword("_SURFACE_TYPE_OPAQUE");
         mat.EnableKeyword("_SURFACE_TYPE_TRANSPARENT");
         mat.EnableKeyword("_ALPHAPREMULTIPLY_ON");
