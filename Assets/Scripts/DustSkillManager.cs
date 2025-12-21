@@ -32,7 +32,9 @@ public class DustSkillManager : MonoBehaviour
     {
         if (isCoolingDown || IsSkillActive) return;
 
-        skillButtonImage.color = cooldownColor;  
+        SoundManager.Instance.PlaySkillUse(); 
+
+        skillButtonImage.color = cooldownColor;
 
         StartCoroutine(SkillRoutine());
         StartCoroutine(CooldownRoutine());
@@ -61,7 +63,9 @@ public class DustSkillManager : MonoBehaviour
 
         cooldownFill.fillAmount = 1f;
 
-        skillButtonImage.color = normalColor;  
         isCoolingDown = false;
+        skillButtonImage.color = normalColor;
+
+        SoundManager.Instance.PlaySkillReady();
     }
 }

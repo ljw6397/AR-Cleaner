@@ -15,6 +15,11 @@ public class StageSelectManager : MonoBehaviour
         RefreshStageButtons();
     }
 
+    void Start()
+    {
+        SoundManager.Instance.PlayStageSelectBGM();
+    }
+
     void RefreshStageButtons()
     {
         SetButtonState(stageButtons[0], true);

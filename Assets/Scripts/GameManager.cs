@@ -61,6 +61,15 @@ public class GameManager : MonoBehaviour
             timerFlashRoutine = StartCoroutine(FlashTimer());
         }
 
+        if (currentTime <= 15f)
+        {
+            SoundManager.Instance.timerSource.pitch = 1.4f;
+        }
+        else
+        {
+            SoundManager.Instance.timerSource.pitch = 1f;
+        }
+
         if (currentTime <= 0)
         {
             EndStage(false);
@@ -134,11 +143,15 @@ public class GameManager : MonoBehaviour
 
         countdownText.gameObject.SetActive(false);
 
-        stageActive = true; 
+        stageActive = true;
+
+        SoundManager.Instance.PlayIngameBGM();
+        SoundManager.Instance.PlayTimerTick();   
     }
 
     void EndStage(bool success)
     {
+        if (!stageActive) return;  
         stageActive = false;
 
         if (timerFlashRoutine != null)
@@ -147,8 +160,13 @@ public class GameManager : MonoBehaviour
             timerFlashRoutine = null;
         }
 
+        SoundManager.Instance.StopTimerTick();
+        SoundManager.Instance.StopBGM();
+
         if (success)
         {
+            SoundManager.Instance.PlayStageClear();
+
             PlayerPrefs.SetInt($"Stage{currentStageIndex + 1}_Clear", 1);
 
             stageClearUI.SetActive(true);
@@ -157,6 +175,8 @@ public class GameManager : MonoBehaviour
         }
         else
         {
+            SoundManager.Instance.PlayStageFail();
+
             stageFailUI.SetActive(true);
             failGroup.alpha = 0f;
             StartCoroutine(FadeIn(failGroup, 1f));
