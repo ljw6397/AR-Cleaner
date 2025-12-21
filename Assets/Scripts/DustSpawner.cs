@@ -66,7 +66,7 @@ public class DustSpawner : MonoBehaviour
                  GameObject dust = Instantiate(randomDust, spawnPos, spawnRot);
 
                     dust.transform.Rotate(Vector3.forward * Random.Range(0f, 360f));
-                    float randomScale = Random.Range(5f, 6f);
+                    float randomScale = Random.Range(7f, 8f);
                     dust.transform.localScale = Vector3.one * randomScale;
 
                     DustClickHandler handler = dust.GetComponent<DustClickHandler>();
