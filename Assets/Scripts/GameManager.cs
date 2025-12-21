@@ -38,6 +38,9 @@ public class GameManager : MonoBehaviour
 
     void Start()
     {
+        SoundManager.Instance.StopBGM();
+        SoundManager.Instance.StopTimerTick();
+
         currentStageIndex = PlayerPrefs.GetInt("SelectedStageIndex", 0);
 
         if (stageClearUI != null) stageClearUI.SetActive(false);
