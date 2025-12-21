@@ -12,10 +12,12 @@ public class GameManager : MonoBehaviour
 
     [Header("UI")]
     public Text stageText;
-    public Text timerText;
     public Text targetScoreText;
     [Header("Countdown UI")]
     public Text countdownText;
+
+    [Header("Timer UI")]
+    public Image timerFillImage;
 
     [Header("Result UI")]
     public GameObject stageClearUI;
@@ -49,7 +51,10 @@ public class GameManager : MonoBehaviour
         if (!stageActive) return;
 
         currentTime -= Time.deltaTime;
-        timerText.text = "Time: " + Mathf.CeilToInt(currentTime).ToString();
+
+        // 게이지 비율 계산
+        float ratio = currentTime / stages[currentStageIndex].timeLimit;
+        timerFillImage.fillAmount = Mathf.Clamp01(ratio);
 
         if (currentTime <= 15f && timerFlashRoutine == null)
         {
@@ -75,16 +80,27 @@ public class GameManager : MonoBehaviour
             return;
         }
 
+        currentStageIndex = index;   // ← 이거 꼭 필요함
+
         Stage stage = stages[index];
         stageText.text = "Stage " + stage.stageNumber;
         targetScoreText.text = "목표 점수: " + stage.targetScore + " / ";
 
         currentTime = stage.timeLimit;
 
+        timerFillImage.fillAmount = 1f;
+        timerFillImage.color = Color.yellow;
+
+        if (timerFlashRoutine != null)
+        {
+            StopCoroutine(timerFlashRoutine);
+            timerFlashRoutine = null;
+        }
+
         ScoreManager.Instance.score = 0;
         ScoreManager.Instance.UpdateUI();
 
-        stageActive = false; 
+        stageActive = false;
 
         StartCoroutine(StageCountdown());
     }
@@ -129,7 +145,6 @@ public class GameManager : MonoBehaviour
         {
             StopCoroutine(timerFlashRoutine);
             timerFlashRoutine = null;
-            timerText.color = Color.white;
         }
 
         if (success)
@@ -185,19 +200,16 @@ public class GameManager : MonoBehaviour
 
     private IEnumerator FlashTimer()
     {
-        Color normalColor = timerText.color;
+        Color normalColor = timerFillImage.color;
         Color flashColor = Color.red;
-
         float speed = 0.5f;
 
         while (true)
         {
-            // 빨간색으로 변경
-            timerText.color = flashColor;
+            timerFillImage.color = flashColor;
             yield return new WaitForSeconds(speed);
 
-            // 원래 색으로 변경
-            timerText.color = normalColor;
+            timerFillImage.color = normalColor;
             yield return new WaitForSeconds(speed);
         }
     }
