@@ -77,7 +77,7 @@ public class GameManager : MonoBehaviour
 
         Stage stage = stages[index];
         stageText.text = "Stage " + stage.stageNumber;
-        targetScoreText.text = "목표 점수: " + stage.targetScore;
+        targetScoreText.text = "목표 점수: " + stage.targetScore + " / ";
 
         currentTime = stage.timeLimit;
 
